@@ -1,62 +1,86 @@
-import Button from "./component/button";
 import "./App.css";
 import { useState } from "react";
+import Button from "./components/Button.jsx";
+import { useOutletContext } from "react-router";
 
 function App() {
-  const [input, setInput] = useState("");
-  const [Tasks, setTasks] = useState([]);
+  let [taskData, setTaskData] = useState({
+    text: "",
+    date: "",
+    priority: "High",
+  });
+  let { tasks, setTasks } = useOutletContext();
 
-  const Add = () => {
-    if (input.trim() === "") return;
-    setTasks([...Tasks, input]);
-    setInput(" ");
-  };
-
-  const DeleteOne = (index) => {
-    const newTasks = Tasks.filter((task, taskIndex) => taskIndex !== index);
-    setTasks(newTasks);
-  };
-
-  const ClearAll = () => {
-    setTasks([]);
-  };
+  function addTask() {
+    if (!taskData.text.trim()) return;
+    setTasks([taskData, ...tasks]);
+    setTaskData({
+      text: "",
+      date: "",
+      priority: "High",
+    });
+  }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
-      <div className="bg-white rounded-2xl p-6 w-full max-w-2xl">
-        <h1 className="font-bold text-3xl text-center  mb-6">
-          Manage Your ToDos
+    <div className="flex justify-center items-center">
+      <section className="bg-blue-590 w-full max-w-lg text-white rounded-xl p-6 shadow-lg">
+        <h1 className="font-bold text-2xl text-white text-center mb-6">
+          Add Task
         </h1>
 
-        <div className="flex gap-2 mb-6">
-          <input
-            type="text"
-            value={input}
-            placeholder="Write your todo here..."
-            onChange={(e) => setInput(e.target.value)}
-            className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <Button AddBtn={Add} text="Add" />
-        </div>
-
-        <div className="space-y-3">
-          {Tasks.map((task, index) => (
-            <div
-              key={index}
-              className="flex justify-between items-center bg-gray-50 border rounded-lg px-4 py-2 shadow-sm"
-            >
-              <p className="text-gray-700 font-medium">{task}</p>
-              <Button AddBtn={() => DeleteOne(index)} text="Delete" />
-            </div>
-          ))}
-        </div>
-
-        {Tasks.length > 0 && (
-          <div className="mt-6 text-center">
-            <Button AddBtn={ClearAll} text="Clear All" />
+        <div className="space-y-4">
+          <div>
+            <label className="block mb-1 font-medium">Title:</label>
+            <input
+              type="text"
+              value={taskData.text}
+              placeholder="Enter your task!"
+              className="w-full rounded-lg border p-3 text-white"
+              onChange={(e) => {
+                setTaskData({ ...taskData, text: e.target.value });
+              }}
+            />
           </div>
-        )}
-      </div>
+
+          <div>
+            <label className="block mb-1 font-medium">Date:</label>
+            <input
+              type="date"
+              value={taskData.date}
+              className="w-full rounded-lg border p-3 text-white"
+              onChange={(e) => {
+                setTaskData({ ...taskData, date: e.target.value });
+              }}
+            />
+          </div>
+
+          <div>
+            <label className="block mb-1 font-medium">Priority:</label>
+            <select
+              value={taskData.priority}
+              onChange={(e) =>
+                setTaskData({ ...taskData, priority: e.target.value })
+              }
+              className="w-full rounded-lg border border-white p-3 text-white"
+            >
+              <option value="High" className="bg-gray-200">
+                High
+              </option>
+              <option value="Med" className="bg-gray-200">
+                Medium
+              </option>
+              <option value="Low" className="bg-gray-200">
+                Low
+              </option>
+            </select>
+          </div>
+
+          {/* Button */}
+          <div className="flex justify-end">
+            <Button AddBtn={addTask} text="Add" />
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
