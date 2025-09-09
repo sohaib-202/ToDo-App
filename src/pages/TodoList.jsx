@@ -1,16 +1,20 @@
 import { useOutletContext } from "react-router-dom";
 import Button from "../components/Button.jsx";
+import { useCallback } from "react";
 
 function TodoList() {
   let { tasks, setTasks } = useOutletContext();
 
-  function deleteTask(id) {
-    setTasks(tasks.filter((task, index) => index !== id));
-  }
+  const deleteTask = useCallback(
+    (id) => {
+      setTasks(tasks.filter((task, index) => index !== id));
+    },
+    [tasks, setTasks]
+  );
 
-  function clearList() {
+  const clearList = useCallback(() => {
     setTasks([]);
-  }
+  }, [setTasks]);
 
   return (
     <div className="flex justify-center items-center">
